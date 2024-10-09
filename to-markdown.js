@@ -201,7 +201,13 @@ toMarkdown = function (input, options) {
   
   // Replace NBSP with space
   input = input.replace(/&nbsp;/g, ' ');
-  
+
+  // Replace setext headers with atx format
+  input = input.replace(/^(.+)\n(=+|-+)/gm, function(match, p1, p2) {
+    var level = p2[0] === '=' ? 1 : 2;
+    return '#'.repeat(level) + ' ' + p1;
+  });
+
   var clone = htmlToDom(input).body
   var nodes = bfsOrder(clone)
   var output
