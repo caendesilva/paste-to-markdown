@@ -198,7 +198,10 @@ toMarkdown = function (input, options) {
 
   // Escape potential ol triggers
   input = input.replace(/(>[\r\n\s]*)(\d+)\.(&nbsp;| )/g, '$1$2\\.$3')
-
+  
+  // Replace NBSP with space
+  input = input.replace(/&nbsp;/g, ' ');
+  
   var clone = htmlToDom(input).body
   var nodes = bfsOrder(clone)
   var output
