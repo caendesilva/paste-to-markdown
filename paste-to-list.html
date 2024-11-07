@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Paste to Markdown List</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <link href="favicon.ico" rel="icon" type="image/x-icon">
+        <link rel="stylesheet" href="bootstrap.css">
+        <style>
+            h2 {
+                font-size: 22px;
+                font-style: italic;
+            }
+            body {
+                background-attachment: fixed;
+                background-image: url('background.svg');
+                background-position: right 10% bottom 20%;
+                background-repeat: no-repeat;
+                background-size: 20em;
+                margin-bottom: 10vh;
+                margin-top: 10vh;
+                font-family: Arial, sans-serif;
+            }
+            #pastebin {
+                opacity: 0.01;
+                width: 100%;
+                height: 1px;
+                overflow: hidden;
+            }
+            #output {
+                border: none;
+                background: transparent;
+                font-family: Consolas, "Liberation Mono", Courier, monospace;
+                font-size: 13px;
+                line-height: 19px;
+                min-height: 40vh;
+                overflow: auto;
+                padding: 6px 10px;
+                resize: none;
+                width: 100%;
+            }
+            .button-group {
+                margin-top: 10px;
+                display: flex;
+                gap: 10px;
+            }
+            .button-group button {
+                padding: 8px 12px;
+                font-size: 14px;
+                cursor: pointer;
+                border: none;
+                border-radius: 4px;
+                background-color: #007bff;
+                color: white;
+                transition: background-color 0.3s;
+            }
+            .button-group button:hover {
+                background-color: #0056b3;
+            }
+            .hidden {
+                display: none;
+            }
+            @media (prefers-color-scheme: dark) {
+                body { 
+                    background-image: url('background-dark.svg');
+                    background-color: #222; 
+                    color: white; 
+                }
+                code {
+                    color: #ff7a9c;
+                    background-color: #0e0609;
+                }
+                a {
+                    color: #8fcbff;
+                }
+                .button-group button {
+                    background-color: #28a745;
+                }
+                .button-group button:hover {
+                    background-color: #1e7e34;
+                }
+            }
+        </style>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const pastebin = document.getElementById('pastebin');
+                const output = document.getElementById('output');
+                const wrapper = document.getElementById('wrapper');
+                const listTypeBtn = document.getElementById('listTypeBtn');
+                const copyBtn = document.getElementById('copyBtn');
+                const clearBtn = document.getElementById('clearBtn');
+                let isOrdered = false;
+
+                const convertToMarkdownList = (text, ordered) => {
+                    const lines = text.split('\n').map(line => line.trim()).filter(line => line !== '');
+                    return lines.map((line, index) => {
+                        return ordered ? `${index + 1}. ${line}` : `- ${line}`;
+                    }).join('\n');
+                };
+
+                const insert = (myField, myValue) => {
+                    myField.value = myValue;
+                };
+
+                pastebin.addEventListener('paste', function () {
+                    setTimeout(function () {
+                        const text = pastebin.innerText || pastebin.textContent;
+                        const markdown = convertToMarkdownList(text, isOrdered);
+                        insert(output, markdown);
+                        wrapper.classList.remove('hidden');
+                        output.focus();
+                        output.select();
+                    }, 100);
+                });
+
+                document.addEventListener('keydown', function (event) {
+                    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'v') {
+                        setTimeout(() => {
+                            const text = pastebin.innerText || pastebin.textContent;
+                            if (text.trim() !== '') {
+                                output.value = convertToMarkdownList(text, isOrdered);
+                                wrapper.classList.remove('hidden');
+                            }
+                        }, 100);
+                    }
+                });
+
+                listTypeBtn.addEventListener('click', function () {
+                    isOrdered = !isOrdered;
+                    listTypeBtn.textContent = isOrdered ? 'Switch to Unordered List' : 'Switch to Ordered List';
+                    const currentText = output.value;
+                    const lines = currentText.split('\n').map(line => {
+                        return isOrdered ? line.replace(/^-\s/, '').trim() : line.replace(/^\d+\.\s/, '').trim();
+                    });
+                    output.value = convertToMarkdownList(lines.join('\n'), isOrdered);
+                });
+
+                copyBtn.addEventListener('click', function () {
+                    output.select();
+                    document.execCommand('copy');
+                });
+
+                clearBtn.addEventListener('click', function () {
+                    output.value = '';
+                    wrapper.classList.add('hidden');
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <section id="info">
+                <h1>Paste to Markdown List</h1>
+                <h2>Instructions</h2>
+                <ol>
+                    <li>Find the text to convert to a Markdown list (e.g., in another browser tab)</li>
+                    <li>Copy it to the clipboard (<code>Ctrl+C</code>, or <code>&#8984;+C</code> on Mac)</li>
+                    <li>Paste it into this window (<code>Ctrl+V</code>, or <code>&#8984;+V</code> on Mac)</li>
+                    <li>The converted Markdown list will appear!</li>
+                </ol>
+                <p>The conversion is performed locally in your browser.</p>
+                <div class="button-group hidden" id="wrapper">
+                    <button id="listTypeBtn">Switch to Ordered List</button>
+                    <button id="copyBtn">Copy to Clipboard</button>
+                    <button id="clearBtn">Clear Output</button>
+                </div>
+                <textarea id="output" readonly></textarea>
+            </section>
+            <div contenteditable="true" id="pastebin"></div>
+        </div>
+    </body>
+</html>
