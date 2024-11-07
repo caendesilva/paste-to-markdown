@@ -10,7 +10,7 @@
             background-color: #f4f4f4;
         }
         .container {
-            max-width: 600px;
+            max-width: 1000px;
             margin: auto;
             background: #fff;
             padding: 20px;
@@ -19,16 +19,7 @@
         }
         h1 {
             text-align: center;
-        }
-        textarea {
-            width: 100%;
-            height: 200px;
-            padding: 10px;
-            margin-top: 20px;
-            resize: none;
-            font-family: monospace;
-            font-size: 14px;
-            max-width: -webkit-fill-available;
+            margin-top: 0;
         }
         menu {
             display: flex;
@@ -38,37 +29,51 @@
             border-radius: 4px;
             width: 100%;
             padding: 0;
+            margin-bottom: 0;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
         }
         button {
             padding: 10px 15px;
             border: none;
-            background-color: #007BFF;
-            color: #fff;
+            background-color: #ccc;
+            color: #333;
             cursor: pointer;
             font-size: 14px;
             width: 100%;
         }
         button:nth-child(2) {
-            border-left: 1px solid #0056b344;
-            border-right: 1px solid #0056b344;
+            border-left: 1px solid #999;
+            border-right: 1px solid #999;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #bbb;
         }
         button:active {
-            background-color: #00408d;
+            background-color: #bbb;
+        }
+        textarea {
+            width: 100%;
+            height: 60vh;
+            padding: 10px;
+            resize: none;
+            font-family: monospace;
+            font-size: 14px;
+            max-width: -webkit-fill-available;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Paste to Markdown List</h1>
-        <textarea id="output" placeholder="Pasted markdown will appear here..."></textarea>
         <menu class="buttons">
             <button id="toggleList">Switch to Ordered List</button>
             <button id="copy">Copy to Clipboard</button>
             <button id="clear">Clear Output</button>
         </menu>
+        <textarea id="output" placeholder="Pasted markdown will appear here..."></textarea>
     </div>
 
     <script>
